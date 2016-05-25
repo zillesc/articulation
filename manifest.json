@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+
+  "name": "Illinois Articulation Assistant",
+  "description": "This extension helps automate repetitive tasks for handling articulations.",
+  "version": "1.0",
+
+  "content_scripts": [
+    {
+      "matches": ["https://secure.admissions.illinois.edu/CourseArticulation/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "Illinois_logo.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "https://secure.admissions.illinois.edu/CourseArticulation/*"
+  ]
+}
