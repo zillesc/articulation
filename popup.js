@@ -54,68 +54,71 @@ function getCurrentTabUrl(callback) {
   });
 }
 
-
-function fillInForm() {
-  var purview = document.getElementById('ctl00_ContentPlaceHolder1_rdo_purview_0');
-  console.log(purview);
-  purview.value = 1;
-}
-
-function renderStatus(statusText) {
-  document.getElementById('status').textContent = statusText;
-}
-
+/**
+ * Send a message to the content.js script attached to the articulation page
+ *
+ * @param {object} message - an object containing the information needed to 
+ * 	  	   	     affect the target page
+ * two kinds of messages are supported: 
+ *   1. { submit_only: true }
+ *   2. an element from the _classes array above
+ */
 function sendMessageToContent(message) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, message);
   });
 }
 
-function classButtonClick(context) {
-  var courseInfo = _classes[context];
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, courseInfo, function(response) {
-      console.log(response.farewell);
-    });
-  });
-}
-
-function createClassButton(context, number) {
+/**
+ * Create a button in the popup for a class in _classes, with a callback
+ * to send a message to the context.js to populate the form with class info
+ *
+ * @param {DOM element} context - the DOM element to insert the button into
+ * @param {string} label - the identifier/label of for the button
+ * 	  	   	   should be a key into the _classes array
+ * 	  	   	     
+ */
+function createClassButton(context, label) {
   var button = document.createElement("input");
   button.type = "button";
-  button.value = number;
-  button.onclick = function() { classButtonClick(number); };
+  button.value = label;
+  button.onclick = function() { sendMessageToContent(_classes[label]); };
   context.appendChild(button);
 }
 
+/**
+ * Dynamically generate content for popup
+ */
+function setup() {
+  // attach a callback to the submit button.
+  var submit_button = document.getElementById('submit');
+  submit_button.onclick = function() { sendMessageToContent({ submit_only: true }); };
+
+  // create a button for each of the classes in _classes
+  var button_div = document.getElementById('buttons');
+  var keys = Object.keys(_classes);
+  keys.sort();
+  for (var i = 0 ; i < keys.length ; i ++) {
+    createClassButton(button_div, keys[i]);
+  }
+}
+
+
+/**
+ * Invoked extension clicked and popup.html finishes rendering.  Do one of two things:
+ *    1. if not currently on the articulation page, load it in a new tab
+ *    2. otherwise, create a menu of actions in popup.html for user 	  	   	     
+ */
 document.addEventListener('DOMContentLoaded', function() {
   var articulationUrl = 'https://secure.admissions.illinois.edu/CourseArticulation/Department/Default.aspx';
   var articulationUrlPrefix = 'https://secure.admissions.illinois.edu/CourseArticulation'; 
 
   getCurrentTabUrl(function(url) {
-    // chrome.browserAction.setBadgeText({text: "rawr"});
-
-    // fillInForm();
-    if (url.indexOf(articulationUrlPrefix) !== -1) {
-      var submit_button = document.getElementById('submit');
-      submit_button.onclick = function() { sendMessageToContent({ submit_only: true }); };
-
-      var button_div = document.getElementById('buttons');
-      var keys = Object.keys(_classes);
-      keys.sort();
-      for (var i = 0 ; i < keys.length ; i ++) {
-        createClassButton(button_div, keys[i]);
-      }
-      return;
+    if (url.indexOf(articulationUrlPrefix) === -1) {
+      chrome.tabs.create({ url: articulationUrl });
+    } else {
+      setup();
     }
-
-    // Put the image URL in Google search.
-    renderStatus('Opening ' + articulationUrl);
-    var createProperties = { url: articulationUrl };
-
-    chrome.tabs.create(createProperties, function(tab) {
-      renderStatus('page loaded');
-    });
   });
 });
 
