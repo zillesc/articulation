@@ -17,7 +17,7 @@ Configuration
 
 Currently configured for Computer Science courses, but could be configured for other departments/units.  Configuration is currently performed by editing the popup.js file and adding/modifying entries in the _classes array.  (Sorry...)
 
-Currently, it supports two kinds of entries:
+Currently, it supports three kinds of entries:
 
   1. entries for courses not articulated to a specific course (e.g., CS 1--), which look like the following
   
@@ -29,6 +29,9 @@ Currently, it supports two kinds of entries:
 
 In both cases, the first thing (the key) is the thing that will show up in the popup list.
 
+  3. entries for common reasons for courses not being eligible for UofI credit.
+
+     `'Nope'   : { rubric: 'CS', noteligible: true, explain: 'The University of Illinois does not grant college credit for courses whose primary focus is office applications (e.g., Microsoft Office).' },`
 
 
 Usage

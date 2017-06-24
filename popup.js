@@ -1,8 +1,10 @@
-// Copyright (c) 2014 The Chromium Authors. All rights reserved.
+// Copyright (c) 2016 Craig Zilles. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+var department = 'CS';
 var _classes = {
+    'Nope'   : { rubric: 'CS', noteligible: true, explain: 'The University of Illinois does not grant college credit for courses whose primary focus is office applications (e.g., Microsoft Office).' },
     'CS 1--' : { rubric: 'CS', level: '1--',  isrealclass: false },
     'CS 2--' : { rubric: 'CS', level: '2--',  isrealclass: false },
     'CS 3--' : { rubric: 'CS', level: '3--',  isrealclass: false },
@@ -13,10 +15,16 @@ var _classes = {
     'CS 173' : { rubric: 'CS', number: '173', isrealclass: true, hours: 3, title: 'Discrete Structures' },
     'CS 225' : { rubric: 'CS', number: '225', isrealclass: true, hours: 4, title: 'Data Structures and Algorithms' },
     'CS 233' : { rubric: 'CS', number: '233', isrealclass: true, hours: 4, title: 'Computer Architecture' },
+    'CS 241' : { rubric: 'CS', number: '241', isrealclass: true, hours: 4, title: 'System Programming' },
     'CS 357' : { rubric: 'CS', number: '357', isrealclass: true, hours: 3, title: 'Numerical Methods I' },
+    'CS 361' : { rubric: 'CS', number: '361', isrealclass: true, hours: 3, title: 'Probability & Statistics for Computer Science' },
+
     'CS 374' : { rubric: 'CS', number: '374', isrealclass: true, hours: 4, title: 'Algorithms and Models of Computation' },
     'CS 411' : { rubric: 'CS', number: '411', isrealclass: true, hours: 3, title: 'Database Systems' },
+    'CS 423' : { rubric: 'CS', number: '423', isrealclass: true, hours: 3, title: 'Operating System Design' },
+    'INFO 102' : { rubric: 'INFO', number: '102', isrealclass: true, hours: 3, title: 'Little Bits to Big Ideas' },
 };
+
 
 /**
  * Get the current URL.
@@ -99,6 +107,7 @@ function setup() {
   var keys = Object.keys(_classes);
   keys.sort();
   for (var i = 0 ; i < keys.length ; i ++) {
+    _classes[keys[i]].dept = department;
     createClassButton(button_div, keys[i]);
   }
 }

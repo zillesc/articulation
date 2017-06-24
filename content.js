@@ -17,8 +17,13 @@
 
 var steps = [
   { id: 'ctl00_ContentPlaceHolder1_rdo_purview_0', action: 'click' },
-  { id: 'ctl00_ContentPlaceHolder1_txt_program', action: 'text', field: 'rubric' },
-  { id: 'ctl00_ContentPlaceHolder1_rdo_transferrabilty_1', action: 'click'},
+  { id: 'ctl00_ContentPlaceHolder1_txt_program', action: 'text', field: 'dept' },
+  { id: 'ctl00_ContentPlaceHolder1_rdo_transferrabilty_1', action: 'conditional', field: 'noteligible', condition: false},
+  { id: 'ctl00_ContentPlaceHolder1_rdo_transferrabilty_0', action: 'conditional', field: 'noteligible', condition: true},
+
+  // placed before 'multicourse sequence' ones because those won't show up.  this one terminates if present.
+  { id: 'ctl00_ContentPlaceHolder1_txt_suggestions', action: 'text', field: 'explain', ignoreIfNotPresent: true, terminate: true },
+
   { id: 'ctl00_ContentPlaceHolder1_rdo_multicourse_sequence_1', action: 'conditional', field: 'isrealclass', condition: false },
   { id: 'ctl00_ContentPlaceHolder1_rdo_multicourse_sequence_0', action: 'conditional', field: 'isrealclass', condition: true },
   { id: 'ctl00_ContentPlaceHolder1_txt_non_equiv_level',  action: 'text', field: 'level', ignoreIfNotPresent: true },
@@ -30,8 +35,6 @@ var steps = [
   // 'rubric' follows 'number' because number will ensure that it is loaded, so we can use 'tryonce'
   { id: 'ctl00_ContentPlaceHolder1_txt_rubric',  action: 'text', field: 'rubric', tryonce: true },
 ];
-
-// not eligible text box 'ctl00_ContentPlaceHolder1_txt_suggestions'
 
 
 /**
@@ -53,7 +56,8 @@ function fillInForm(classinfo, stepNumber) {
         widget.click();
         break;
       case 'conditional':
-        if (classinfo[step.field] == step.condition) { 
+        if (classinfo[step.field] == step.condition || 
+            (!step.condition && classinfo[step.field] === undefined)) { 
           widget.click();
         }
         break;
@@ -64,6 +68,9 @@ function fillInForm(classinfo, stepNumber) {
       case 'constText':
         widget.value = step.text;
         break;
+    }
+    if (step.terminate) {
+      return;
     }
     // successfully completed a step, move on to the next one.
     stepNumber ++;
