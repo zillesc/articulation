@@ -13,6 +13,7 @@ var _classes = {
     'CS 105' : { rubric: 'CS', number: '105', isrealclass: true, hours: 3, title: 'Intro Computing: Non-Tech' },
     'CS 125' : { rubric: 'CS', number: '125', isrealclass: true, hours: 4, title: 'Introduction to Computer Science' },
     'CS 173' : { rubric: 'CS', number: '173', isrealclass: true, hours: 3, title: 'Discrete Structures' },
+    'CS 210' : { rubric: 'CS', number: '210', isrealclass: true, hours: 2, title: 'Ethical & Professional Issues' },
     'CS 225' : { rubric: 'CS', number: '225', isrealclass: true, hours: 4, title: 'Data Structures and Algorithms' },
     'CS 233' : { rubric: 'CS', number: '233', isrealclass: true, hours: 4, title: 'Computer Architecture' },
     'CS 241' : { rubric: 'CS', number: '241', isrealclass: true, hours: 4, title: 'System Programming' },
@@ -21,7 +22,10 @@ var _classes = {
 
     'CS 374' : { rubric: 'CS', number: '374', isrealclass: true, hours: 4, title: 'Algorithms and Models of Computation' },
     'CS 411' : { rubric: 'CS', number: '411', isrealclass: true, hours: 3, title: 'Database Systems' },
+    'CS 421' : { rubric: 'CS', number: '421', isrealclass: true, hours: 3, title: 'Programming Languages' },
     'CS 423' : { rubric: 'CS', number: '423', isrealclass: true, hours: 3, title: 'Operating System Design' },
+    'CS 440' : { rubric: 'CS', number: '440', isrealclass: true, hours: 3, title: 'Artificial Intelligence' },
+    'CS 450' : { rubric: 'CS', number: '450', isrealclass: true, hours: 3, title: 'Numerical Analysis' },
     'INFO 102' : { rubric: 'INFO', number: '102', isrealclass: true, hours: 3, title: 'Little Bits to Big Ideas' },
 };
 
@@ -94,10 +98,17 @@ function createClassButton(context, label) {
   context.appendChild(button);
 }
 
+var articulationUrl = 'https://secure.admissions.illinois.edu/CourseArticulation/Department/Default.aspx';
+var articulationUrlPrefix = 'https://secure.admissions.illinois.edu/CourseArticulation'; 
+
 /**
  * Dynamically generate content for popup
  */
 function setup() {
+  // attach a callback to the queue button.
+  var queue_button = document.getElementById('queue');
+  queue_button.onclick = function() {  alert('hi'); chrome.tabs.update({ url: articulationURL });  };
+
   // attach a callback to the submit button.
   var submit_button = document.getElementById('submit');
   submit_button.onclick = function() { sendMessageToContent({ submit_only: true }); };
@@ -119,8 +130,6 @@ function setup() {
  *    2. otherwise, create a menu of actions in popup.html for user 	  	   	     
  */
 document.addEventListener('DOMContentLoaded', function() {
-  var articulationUrl = 'https://secure.admissions.illinois.edu/CourseArticulation/Department/Default.aspx';
-  var articulationUrlPrefix = 'https://secure.admissions.illinois.edu/CourseArticulation'; 
 
   getCurrentTabUrl(function(url) {
     if (url.indexOf(articulationUrlPrefix) === -1) {
