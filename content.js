@@ -16,24 +16,29 @@
  */
 
 var steps = [
-  { id: 'ctl00_ContentPlaceHolder1_rdo_purview_0', action: 'click' },
-  { id: 'ctl00_ContentPlaceHolder1_txt_program', action: 'text', field: 'dept' },
-  { id: 'ctl00_ContentPlaceHolder1_rdo_transferrabilty_1', action: 'conditional', field: 'noteligible', condition: false},
-  { id: 'ctl00_ContentPlaceHolder1_rdo_transferrabilty_0', action: 'conditional', field: 'noteligible', condition: true},
+  { id: 'rbdeptpurviewyes', action: 'click' },
+//  { id: 'Comments', action: 'text', field: 'dept' },
 
+  { id: 'rbgenedyes', action: 'conditional', field: 'gened', condition: true},
+  { id: 'rbgenedno',  action: 'conditional', field: 'gened', condition: false},
+    
+  { id: 'Program', action: 'text', field: 'dept' },
+  { id: 'rbtransferyes', action: 'conditional', field: 'noteligible', condition: false},
+  { id: 'rbtransferno',  action: 'conditional', field: 'noteligible', condition: true},
+    
   // placed before 'multicourse sequence' ones because those won't show up.  this one terminates if present.
-  { id: 'ctl00_ContentPlaceHolder1_txt_suggestions', action: 'text', field: 'explain', ignoreIfNotPresent: true, terminate: true },
+  { id: 'Suggestions', action: 'text', field: 'explain', ignoreIfNotPresent: true, terminate: true },
 
-  { id: 'ctl00_ContentPlaceHolder1_rdo_multicourse_sequence_1', action: 'conditional', field: 'isrealclass', condition: false },
-  { id: 'ctl00_ContentPlaceHolder1_rdo_multicourse_sequence_0', action: 'conditional', field: 'isrealclass', condition: true },
-  { id: 'ctl00_ContentPlaceHolder1_txt_non_equiv_level',  action: 'text', field: 'level', ignoreIfNotPresent: true },
+  { id: 'rbequivalentyes', action: 'conditional', field: 'isrealclass', condition: true },
+  { id: 'rbequivalentno',  action: 'conditional', field: 'isrealclass', condition: false },
   // 'rubric' follows 'level' because level will ensure that it is loaded, so we can use 'tryonce'
-  { id: 'ctl00_ContentPlaceHolder1_txt_non_equiv_rubric', action: 'text', field: 'rubric', tryonce: true },
-  { id: 'ctl00_ContentPlaceHolder1_txt_course_number',  action: 'text', field: 'number', ignoreIfNotPresent: true },
-  { id: 'ctl00_ContentPlaceHolder1_txt_credit_hours',  action: 'text', field: 'hours', ignoreIfNotPresent: true },
-  { id: 'ctl00_ContentPlaceHolder1_txt_course_title',  action: 'text', field: 'title', ignoreIfNotPresent: true },
+  { id: 'NonEquivalLevel',  action: 'text', field: 'level', ignoreIfNotPresent: true },
+  { id: 'NonEquivalRubric', action: 'text', field: 'rubric', tryonce: true },
   // 'rubric' follows 'number' because number will ensure that it is loaded, so we can use 'tryonce'
-  { id: 'ctl00_ContentPlaceHolder1_txt_rubric',  action: 'text', field: 'rubric', tryonce: true },
+  //  { id: 'SubCourseNum',  action: 'text', field: 'number', ignoreIfNotPresent: true },
+  { id: 'SubRubric', action: 'text', field: 'rubric', tryonce: true },
+//  { id: 'credit_hours',  action: 'text', field: 'hours', ignoreIfNotPresent: true },
+//  { id: 'course_title',  action: 'text', field: 'title', ignoreIfNotPresent: true },
 ];
 
 
@@ -46,7 +51,7 @@ var steps = [
 function fillInForm(classinfo, stepNumber) {
   var timeOut = 0;	       		   // time before attempting next step
   var step = steps[stepNumber];		   // info associated with current step
-  // console.log(step.id);
+  console.log(step.id);
 
   // get the indicated DOM element.  If present, perform the specified operation.
   var widget = document.getElementById(step.id);
@@ -69,15 +74,16 @@ function fillInForm(classinfo, stepNumber) {
         widget.value = step.text;
         break;
     }
-    if (step.terminate) {
+    if (step.terminate && classinfo[step.field] !== undefined) {
       return;
     }
     // successfully completed a step, move on to the next one.
     stepNumber ++;
-  } else if (step.tryonce || step.ignoreIfNotPresent && classinfo[step.field] === undefined) {
+  } else if (step.tryonce || (step.ignoreIfNotPresent && classinfo[step.field] === undefined)) {
     // just skip and move on to the next one.
     stepNumber ++;
-  } else {    
+  } else {
+    console.log('waiting\n');
     // else retry the same step in a few milliseconds, the form is
     // being rendered based on our previous input
     timeOut = 100;
